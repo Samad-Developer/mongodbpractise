@@ -9,8 +9,10 @@ export default async function Home() {
 
   try {
     // Fetch users and posts from the database
+    console.log('checking bedfore and after')
     users = await prisma.user.findMany();
     posts = await prisma.post.findMany();
+    console.log('checking bedfore and after')
   } catch (err) {
     console.error("Error fetching data:", err);
     error = "Failed to fetch data. Please try again later.";
