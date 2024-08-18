@@ -17,7 +17,7 @@ export default async function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-8 bg-white">
+    <main className="flex min-h-screen flex-col items-center justify-between p-8">
       <h1 className="text-4xl font-bold mb-8 text-black">User and Post Data</h1>
 
       {/* Error Handling */}
