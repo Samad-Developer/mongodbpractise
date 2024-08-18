@@ -1,67 +1,50 @@
-import Image from "next/image";
-import prisma from "@/lib/prisma";
-import { User, Post } from "@prisma/client";
+"use client"
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export default async function Home() {
-  let users: User[] = [];
-  let posts: Post[] = [];
-  let error: string | null = null;
+interface Post {
+  id: number;
+  title: string;
+  userId: number;
+  // Add other fields as needed
+}
 
-  try {
-    // Fetch users and posts from the database
-    users = await prisma.user.findMany();
-    posts = await prisma.post.findMany();
-  } catch (err) {
-    console.error("Error fetching data:", err);
-    error = "Failed to fetch data. Please try again later.";
-  }
+export default function HomePage() {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get('/api/createPost');
+        setPosts(response.data);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+        setError('Failed to fetch posts');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-8">
-      <h1 className="text-4xl font-bold mb-8 text-black">User and Post Data</h1>
-
-      {/* Error Handling */}
-      {error && (
-        <div className="text-black p-4 mb-8">
-          <p>{error}</p>
-        </div>
+    <div>
+      <h1>Latest Posts</h1>
+      {isLoading ? (
+        <p>Loading posts...</p>
+      ) : error ? (
+        <p>Error: {error}</p>
+      ) : (
+        <ul>
+          {posts.map((post) => (
+            <li key={post.id}>{post.title}</li>
+          ))}
+        </ul>
       )}
-
-      <section className="w-full max-w-3xl mb-12">
-        <h2 className="text-2xl font-semibold mb-4 text-black">Users</h2>
-        <div className="p-6">
-          {users.length > 0 ? (
-            <ul className="space-y-4">
-              {users.map((user) => (
-                <li key={user.id} className="p-4">
-                  <p className="text-xl font-semibold text-black">ID: {user.id}</p>
-                  <p className="text-md text-black">Email: {user.email}</p>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-black">No users found</p>
-          )}
-        </div>
-      </section>
-
-      <section className="w-full max-w-3xl">
-        <h2 className="text-2xl font-semibold mb-4 text-black">Posts</h2>
-        <div className="p-6">
-          {posts.length > 0 ? (
-            <ul className="space-y-4">
-              {posts.map((post) => (
-                <li key={post.id} className="p-4">
-                  <p className="text-xl font-semibold text-black">Title: {post.title}</p>
-                  <p className="text-md text-black">User ID: {post.userId}</p>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-black">No posts found</p>
-          )}
-        </div>
-      </section>
-    </main>
+    </div>
   );
 }

@@ -23,9 +23,10 @@ export async function POST(request: Request) {
 // Handle GET request to fetch users
 export async function GET() {
   try {
-    const users = await prisma.user.findMany();
-    return NextResponse.json(users);
+    const posts = await prisma.post.findMany();
+    return NextResponse.json(posts, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+    console.error('Error retrieving posts:', error);
+    return NextResponse.json({ error: 'Failed to get posts' }, { status: 500 });
   }
 }
