@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../lib/prisma'; // Adjust the path as necessary
+import { revalidatePath } from 'next/cache';
 
 // Handle POST request to create a post
 export async function POST(request: Request) {
@@ -8,6 +9,7 @@ export async function POST(request: Request) {
     const post = await prisma.post.create({
       data: { title, userId },
     });
+    // revalidatePath('/')
     return NextResponse.json(post, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create post' }, { status: 500 });
