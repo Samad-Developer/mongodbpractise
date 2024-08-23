@@ -30,7 +30,7 @@ export async function postImage(formdata: FormData) {
       buffer
     );
 
-    const product = await prisma.product.create({
+    await prisma.product.create({
       data: {
         name: 'Checking Name',
         price: 0, // Set a default price or get it from formdata
