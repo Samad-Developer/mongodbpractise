@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const post = await prisma.post.create({
       data: { title, userId },
     });
-    // revalidatePath('/')
+    revalidatePath('/')
     return NextResponse.json(post, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create post' }, { status: 500 });
