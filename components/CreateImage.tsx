@@ -4,20 +4,21 @@
 
 import { useState } from "react";
 import { postImage } from "./actions";
+import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
 
 
 export default function ImageUploadForm() {
-  const [image, setImage] = useState<File | null>(null);
+  const [image, setImage] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setImage(file);
-    }
-  };
+  const [imageInformation, setImageInformation]  = useState<string>('')
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     setImage(file);
+  //   }
+  // };
 
 //   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 //     event.preventDefault();
@@ -54,22 +55,48 @@ export default function ImageUploadForm() {
 //   };
 
   return (
-    <div>
-      <h1>Upload an Image</h1>
-      <form action={postImage}>
-        <input
-          type="file"
-          accept="image/*"
-          name="image"
-          onChange={handleFileChange}
-          required
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? "Uploading..." : "Upload"}
-        </button>
-      </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
-    </div>
+    <main className="flex  flex-col items-center justify-between p-24">
+
+      { 
+        !image ? (
+          <><h1>{imageInformation}</h1>
+<UploadDropzone
+className=" ut-label:text-lg ut-allowed-content:ut-uploading:text-red-300 ut-uploading:bg-green-400"
+      endpoint="imageUploader"
+      onClientUploadComplete={(res) => {
+        // Do something with the response
+        console.log("Files: ", res[0].url);
+        setImage(res[0].url)
+
+      }}
+      onUploadError={(error: Error) => {
+        // Do something with the error.
+        alert(`ERROR! ${error.message}`);
+        setImageInformation(`ERROR! ${error.message}`)
+      }}
+      onUploadBegin={(name) => {
+        // Do something once upload begins
+        console.log("Uploading: ", name);
+        setImageInformation(`Uploading: ${name}`)
+      }}
+      onDrop={(acceptedFiles) => {
+        // Do something with the accepted files
+        console.log("Accepted files: ", acceptedFiles);
+        setImageInformation(`Accepted files:  ${acceptedFiles}`)
+      }}
+    /></>
+        ) : <div className="max-w-20 max-h-20">
+          
+          <img onClick={() => setImage('')}
+                src={image}
+                alt={image}
+                style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
+              />
+
+        </div>
+      }  
+    
+
+</main>
   );
 }

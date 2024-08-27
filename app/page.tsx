@@ -1,9 +1,10 @@
 // pages/index.tsx (or your desired homepage file)
-"use client"
+
 import prisma from '@/lib/prisma';
 import CreatePost from '@/components/CreatePost';
 import CreateImage from '@/components/CreateImage'
 import { UploadButton } from '@/src/utils/uploadthing';
+import { UploadDropzone } from '@/lib/uploadthing';
 export default async function HomePage() {
   interface Product {
     id: string;
@@ -12,31 +13,18 @@ export default async function HomePage() {
     imageUrl?: string;
     createdAt: string;
   }
-  // const posts = await prisma.post.findMany();
-  // const products = await prisma.product.findMany();
+  const posts = await prisma.post.findMany();
+  const products = await prisma.product.findMany();
   return (
     <div>
-     
+
       <div className='flex flex-col '>
-      <h2>Create a New Post</h2>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <UploadButton
-        endpoint="imageUploader"
-        onClientUploadComplete={(res) => {
-          // Do something with the response
-          console.log("Files: ", res);
-          
-        }}
-        onUploadError={(error: Error) => {
-          // Do something with the error.
-          alert(`ERROR! ${error.message}`);
-        }}
-      />
-    </main>
-      <CreateImage/>
-      <h1>Products</h1>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-        {/* {products.map((product) => (
+        <h2>Create a New Post</h2>
+      
+        <CreateImage />
+        <h1>Products</h1>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+          {products.map((product) => (
           <div key={product.id} style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', maxWidth: '200px' }}>
             <h2>{product.name}</h2>
             <p>Price: ${product.price.toFixed(2)}</p>
@@ -49,17 +37,17 @@ export default async function HomePage() {
             )}
             <p>Created At: {new Date(product.createdAt).toLocaleDateString()}</p>
           </div>
-        ))} */}
-      </div>
+        ))}
+        </div>
       </div>
       <h1>Latest Posts</h1>
-      
-        <ul>
-          {/* {posts.map((post) => (
+
+      <ul>
+        {posts.map((post) => (
             <li key={post.id}>{post.title}</li>
-          ))} */}
-        </ul>
-      
+          ))}
+      </ul>
+
     </div>
   );
 }

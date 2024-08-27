@@ -1,6 +1,7 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
  import prisma from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 const f = createUploadthing();
  
 const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
@@ -25,7 +26,7 @@ export const ourFileRouter = {
       console.log("Upload complete for userId:", metadata.userId);
  
       console.log("file url", file.url);
-      await prisma.product.create({
+      const product = await prisma.product.create({
         data: {
           name: 'uplod thing image',
           price: 0, // Set a default price or get it from formdata
@@ -33,6 +34,7 @@ export const ourFileRouter = {
           createdAt: new Date(), // Set creation date
         },
       });
+      revalidatePath("/")
       console.log("Store in data base ..................")
  
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
